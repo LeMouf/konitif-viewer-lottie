@@ -1,0 +1,2 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {snapLottiePivot} from '../dist/pivotSnap.js';
+test('snaps only within screen distance to the four corners or diagonal center',()=>{const box=[[0,0],[100,0],[100,100],[0,100]];for(const [x,y,kind] of [[0,0,'nw'],[100,0,'ne'],[100,100,'se'],[0,100,'sw'],[50,50,'center']]){assert.equal(snapLottiePivot({x:x+3,y:y+4},box).kind,kind);}assert.equal(snapLottiePivot({x:50,y:60},box),null);assert.equal(snapLottiePivot({x:NaN,y:0},box),null);assert.equal(snapLottiePivot({x:0,y:0},[]),null);});

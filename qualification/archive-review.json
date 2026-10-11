@@ -1,0 +1,49 @@
+{
+  "name": "lottie-web",
+  "version": "5.13.0",
+  "integrity": "sha512-+gfBXl6sxXMPe8tKQm7qzLnUy5DUPJPKIyRHwtpCpyUEYjHYRJC/5gjUvdkuO2c3JllrPtHXH5UJJK8LRYl5yQ==",
+  "bytes_compressed": 4636781,
+  "files": 312,
+  "scripts": {
+    "lint": "npx eslint ./player/js/**/*",
+    "build": "npx eslint ./player/js/**/* && rollup -c && node tasks/build_worker",
+    "lint:fix": "npx eslint ./player/js/**/* --fix",
+    "build_test": "node tasks/build.js",
+    "test:create": "node test/index.js",
+    "test:compare": "node test/index.js -s compare"
+  },
+  "dependencies": {},
+  "variants": {
+    "package/build/player/lottie_light.js": {
+      "bytes": 388830,
+      "sha256": "96b0710aa725b09ecab886afad23deb073b65436eabcfde225e0b3781567222b",
+      "eval_calls": 0,
+      "notice_lines": [
+        "* by Ga\u00ebtan Renaudeau 2014 - 2015 \u2013 MIT License",
+        "(c) Epistemex 2014-2015",
+        "License: MIT, header required."
+      ]
+    },
+    "package/build/player/lottie_svg.js": {
+      "bytes": 512942,
+      "sha256": "270ccc6913ee166db1951ff053872c9501d010ff95fd9fb1726827484c713722",
+      "eval_calls": 1,
+      "notice_lines": [
+        "* by Ga\u00ebtan Renaudeau 2014 - 2015 \u2013 MIT License",
+        "(c) Epistemex 2014-2015",
+        "License: MIT, header required.",
+        "Copyright 2014 David Bau."
+      ]
+    },
+    "package/build/player/esm/lottie_light.min.js": {
+      "bytes": 364943,
+      "sha256": "f25f2342b7d307ed8b59907db43328b55f2b504780c6744b023d9249a0bc1a81",
+      "eval_calls": 0,
+      "notice_lines": [
+        "* by Ga\u00ebtan Renaudeau 2014 - 2015 \u2013 MIT License",
+        "(c) Epistemex 2014-2015",
+        "License: MIT, header required."
+      ]
+    }
+  }
+}

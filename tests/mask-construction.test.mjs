@@ -1,0 +1,26 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {createLottieHighlight} from '../dist/highlight.js';
+import {createConstructionOverlay} from '../dist/construction.js';
+import {svgFixture} from './svg-dom.mjs';
+test('solid and explicit authored mask expose the evaluated mask geometry and controls above paint without self-clipping',()=>{
+ const f=svgFixture();
+ f.paint.tagName='rect';f.paint.getBBox=()=>({x:0,y:0,width:100,height:100});f.paint.hasAttribute=k=>k in f.paint.attrs;
+ f.paint.getScreenCTM=()=>({a:2,b:0,c:0,d:3,e:4,f:5});
+ const clip=f.doc.createElementNS('', 'clipPath'),mask=f.doc.createElementNS('', 'path');clip.setAttribute('id','mask');clip.appendChild(mask);
+ for(const e of [clip,mask])e.hasAttribute=k=>k in e.attrs;
+ mask.getBBox=()=>({x:10,y:10,width:40,height:20});mask.setAttribute('d','M10 20C10 10 50 10 50 20C50 30 10 30 10 20');
+ f.doc.getElementById=id=>id==='mask'?clip:null;f.group.setAttribute('clip-path','url(#mask)');f.group.setAttribute('transform','matrix(2,0,0,3,4,5)');
+ const solid={id:'solid',kind:'layer',solid:'single-additive',selectable:true,layerRoute:[0],shapeRoute:[]},subject={id:'mask-pt',kind:'mask',maskQualified:true,maskIndex:0,parentId:'solid',label:'Mask 1',selectable:true,layerRoute:[0],shapeRoute:[]};
+ const nodes=[solid,subject],renderer={elements:[{layerElement:f.group}]};
+ const highlight=createLottieHighlight(renderer,nodes),construction=createConstructionOverlay(renderer,nodes);
+ highlight.update([],['solid']);assert.ok(f.descendants(f.svg).some(e=>e.getAttribute('data-lottie-hover')==='solid'));
+ const feedback=f.svg.children.at(-1);assert.equal(feedback.children[0].getAttribute('clip-path'),null);assert.equal(f.group.getAttribute('clip-path'),'url(#mask)');
+ construction.update(['solid']);assert.ok(f.descendants(f.svg).some(e=>e.getAttribute('data-lottie-construction')==='mask-pt'));assert.match(construction.summary(),/Masque vectoriel source.*Mask 1/);
+ assert.equal(f.svg.children.at(-1).children[0].getAttribute('clip-path'),null);assert.equal(f.svg.children.at(-1).children[0].getAttribute('transform'),'matrix(2,0,0,3,4,5)');
+ const before=f.descendants(f.svg).filter(e=>e.getAttribute('d')).map(e=>e.getAttribute('d'));
+ mask.setAttribute('d','M20 20C20 10 60 10 60 20C60 30 20 30 20 20');construction.update(['mask-pt']);
+ const after=f.descendants(f.svg).filter(e=>e.getAttribute('d')).map(e=>e.getAttribute('d'));assert.notDeepEqual(after,before);
+ f.group.setAttribute('visibility','hidden');construction.update(['solid']);highlight.update([],['solid']);assert.equal(f.svg.children.length,2);
+ construction.clear();highlight.dispose();assert.deepEqual(f.svg.children,[f.group,f.cover]);
+});

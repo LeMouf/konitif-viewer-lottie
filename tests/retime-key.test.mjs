@@ -1,0 +1,8 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {moveNumericKey} from '../dist/numericProperty.js';
+test('retimes only the autonomous key timestamp, preserving ordering, values, easing and spatial tangents',()=>{const property={a:1,custom:7,k:[{t:0,s:[0,0],to:[2,3],ti:[-2,-3],o:{x:[.2],y:[.4]},i:{x:[.8],y:[.9]}},{t:15,s:[30,40],h:1,unknown:true},{t:60,s:[80,90]}]},before=JSON.stringify(property),next=moveNumericKey(property,15,20,{start:0,end:60});assert.equal(next.k[1].t,20);assert.deepEqual({...next.k[1],t:15},property.k[1]);assert.deepEqual(next.k[0],property.k[0]);assert.equal(JSON.stringify(property),before);for(const time of [0,60,-1,61,NaN])assert.throws(()=>moveNumericKey(property,15,time,{start:0,end:60}));assert.throws(()=>moveNumericKey({a:1,k:[{t:0,s:[1]},{t:60}]},60,40,{start:0,end:60}));});
+
+test('batch retiming preserves spacing, moves adjacent selected keys and rejects crossing atomically',async()=>{
+ const {moveNumericKeys}=await import('../dist/numericProperty.js');const source={a:1,k:[{t:0,s:[0],h:1},{t:10,s:[10],o:{x:[.42],y:[0]},i:{x:[.58],y:[1]}},{t:20,s:[20]},{t:40,s:[40]}]},before=JSON.stringify(source);
+ const next=moveNumericKeys(source,[{frame:10,nextFrame:25},{frame:20,nextFrame:35}],{start:0,end:60});assert.deepEqual(next.k.map(k=>k.t),[0,25,35,40]);assert.deepEqual({...next.k[1],t:10},source.k[1]);
+ assert.throws(()=>moveNumericKeys(source,[{frame:10,nextFrame:35},{frame:20,nextFrame:45}],{start:0,end:60}));assert.throws(()=>moveNumericKeys(source,[{frame:10,nextFrame:-1}],{start:0,end:60}));assert.equal(JSON.stringify(source),before);
+});
