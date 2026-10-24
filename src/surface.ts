@@ -276,3 +276,6 @@ export {mountLottiePen} from './penSurface.js';
 
 
 
+
+/** Clean render projection for admitted output consumers; no transport or playback ownership. */
+export {createLightRenderer};
