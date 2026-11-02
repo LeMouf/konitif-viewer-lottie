@@ -38,7 +38,8 @@
     "qualification/archive-review.json",
     "CHANGELOG.md",
     "RELEASE.md",
-    "qualification/canvas-output.v1.json"
+    "qualification/canvas-output.v1.json",
+    "docs/host-integration.md"
   ],
   "dependencies": {
     "lottie-web": "5.13.0"

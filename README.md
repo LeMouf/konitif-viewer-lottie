@@ -1,140 +1,60 @@
 # @konitif/viewer-lottie
 
-Optional specialization of KONITIF Viewer for **reading and inspecting** admitted Lottie animations. Version 0.1.0 is a prepared first-release candidate; no registry publication is claimed by this source preparation. It is not a generic Viewer 2D base or a vector editor.
+Host-driven Lottie reading, inspection, editing ports and canvas output for KONITIF.
+First release candidate; npm publication is pending.
 
-## Boundaries
+## Features
 
-- `.` exports the Tool declaration, typed Viewer port, profile validation and source-occurrence index. Importing it does not start a renderer or clock.
-- `./canvas` exposes the lazy, bounded native canvas output for host-owned previews and textures.
-- `./surface` mounts the SVG light reading surface, controls and geometric picking.
-- `./path-list` mounts the collapsible structure outliner. The Workbench hosts it with its existing widget and dock machinery.
-- `./reference` explicitly loads the fuller SVG provider for comparison; it is not part of the default entry.
+- SVG reader with selection, layer tree, pan/zoom and construction overlays.
+- Optional host ports for source editing, imports and Timeline operations.
+- Canvas output for previews and textures, rendered only at host-requested frames.
+- Bounded vector inputs; expressions, external assets and fonts are refused.
 
-The consumer supplies a `LottieViewerHost`. Its `read`, `dispatch` and `subscribe` methods own admitted source, time, selection, hover and projection state. The renderer borrows this port and only calls `goToAndStop` at the admitted relative frame. The example host uses existing `@konitif/temporal` transport/scheduler, without vendor autoplay or another canonical clock.
+The host owns documents, time, commands and persistence. The renderer starts no
+independent playback clock. See the [integration reference](docs/host-integration.md)
+for supported operations, limits and consumer examples.
 
-`ViewerIntent` select / `ViewerSnapshot.selectedIds` are reused. Viewer currently exposes no hover or visibility contract; the Lottie port specializes it with typed transient hover, expansion and projection-visibility intents. None of these edit source JSON or authored paint. Source identity is qualified by source ID, immutable revision and occurrence route; repeated precomposition instances therefore remain distinct.
+## Entry points
 
-## Inspection
+| Import | Purpose |
+| --- | --- |
+| `@konitif/viewer-lottie` | Tool declaration, contracts and profile validation |
+| `@konitif/viewer-lottie/surface` | SVG reader and inspection controls |
+| `@konitif/viewer-lottie/path-list` | Layer and path tree |
+| `@konitif/viewer-lottie/canvas` | Lazy canvas output for host-owned textures |
+| `@konitif/viewer-lottie/reference` | Optional fuller SVG provider for comparison |
 
-The tree has an open document root named from the actual animation; its layer subtrees start collapsed. This navigation root adds no authored layer or renderer subject. Selection from the viewport expands its ancestry; hovering only marks its entry or collapsed ancestors. Keyboard arrows navigate/open/close the tree, Home/End move to its boundaries and Escape clears selection. Selection has a solid 3px contour; hover has a lighter 1.5px dashed contour and never replaces selection. A list entry and the corresponding projected path share the same source reference. Hover, selection and construction guides are separate front interaction layers that preserve spatial transforms and clipping; they never reorder authored paint and are excluded from picking. Hover has a dark contrast halo; selection is drawn above hover. This is explicitly inspection feedback, including portions covered by later paint.
+Peer dependencies: `@konitif/viewer` and `@konitif/tools`.
+The rendering provider is pinned to `lottie-web` 5.13.0.
 
-Successive clicks within 5 CSS pixels cycle front-to-back through geometric hits, then wrap. The cycle resets on significant movement, source/time/candidate change or external selection; empty space clears selection. A drag over 5px does not select. Tests use native Path2D geometry transformed into each SVG paint coordinate system, not bounding-box inclusion. SVG paint order determines depth; contributions sharing the same paint have no separate paint order and use stable source order as a tie-break.
+## Build and verify
 
-**Limits:** source paths and parametric shapes are exposed, but text glyphs, repeaters and generated copies are not individually selectable. Complex masks/clips are excluded from pointer hits; rectangular composition clips (both rect and the exact M/L/Z encoding emitted for precompositions) are qualified. A solid layer may additionally use one closed, fully opaque, non-inverted additive mask with no expansion, entirely contained by its source rectangle. Its evaluated mask path determines the viewport hit at solid-layer identity. The actual authored vector mask (`masksProperties[i].pt`) is also exposed as a distinct, stable child subject; direct mask selection is available from the tree. Selecting the solid inspects its qualified mask automatically, with the same evaluated vertices, cubic controls and guides. Hovering either the solid or its mask shows that mask contour in front. Other masks are still excluded, while their solid layer can be selected explicitly in the tree without a fabricated contour. Merge-path operators remain in the source and carry a fidelity warning. Their independent After Effects result is not qualified. Whole calque/precomposition visibility is supported; group/path visibility controls are unavailable because shared fills and merges cannot safely be split. Hiding a branch clears hidden selection and hover. Expansion is separate from visibility. Projection state resets on source change and Tool remount; dock placement and size use Workbench persistence.
+From a standalone clone, using Node.js 22.14+ and npm 11.5.1+:
 
-For one selected Bézier path, read-only construction overlays show evaluated vertices as filled squares, control points as smaller hollow squares, dashed tangent guides, dashed straight segments and solid curved segments. Marker sizes follow view zoom (6px vertices / 5px controls at 100%), independently of authored layer scaling. The overlay uses the evaluated projected M/L/C/Z geometry, not a claim of editable original control identities. A qualified vector mask is also an authored Bézier subject; its evaluated construction is available directly or through its solid. Its own masking clip is omitted only from this feedback projection so the contour and controls do not clip themselves; outer composition clips remain. Groups and parametric shapes show an explicit limitation; no invented primitive controls, geometry drag or source edits. The view is limited to 256 distinct projected vertices / 512 segments per path.
+```sh
+npm ci --ignore-scripts --no-audit --no-fund
+npm run build
+npm test
+npm run verify:package
+```
 
-The adapter reads version-pinned lottie-web 5.13.0 `itemsData` / `caches` projection data. This private vendor boundary is isolated in the renderer adapter and must be requalified on upgrades. It is not a canonical data store. Rendering a contour from an individual contribution avoids falsely highlighting an aggregate paint path. Owned overlays and visibility attributes are removed/restored on disposal.
+No sibling checkout is required. See the [release checklist](RELEASE.md),
+[changelog](CHANGELOG.md) and [canvas qualification](qualification/canvas-output.v1.json).
 
-The tree identifies source types with Workbench icons, short text labels and moderate color accents: vector layer, solid color with source swatch, precomposition, group, Bézier path, ellipse, rectangle, star/polygon, text and null layer. Associated masks have a mode badge and accessible details on the layer, plus a real source child with its own `/masks/index/pt` identity. Qualified vector masks are selectable for read-only inspection; unsupported mask combinations remain visible with an explicit limitation. No editing command is introduced.
+## Licence and notices
 
-Both feedback areas reserve their space. The tree has a fixed 92px footer outside its scroll area. The reader has a local 144px footer with fixed status/warning/inspection/error/control slots; long feedback remains scrollable and available in tooltips. Selection, hover, deselection and capability messages never resize the viewport. These sizes belong to the Tool surfaces, not the global Workbench footer. Native dock placement and resizing remain owned by Workbench.
+Original integration code: **PolyForm Noncommercial 1.0.0**, see [LICENSE.md](LICENSE.md).
+This is source-available software, not OSI open source. A public repository or
+npm download grants no additional commercial rights. The KONITIF name, logo and
+official identity belong to Maxime Mouflard; the separate trademark notice is in
+the licence file.
 
-## View navigation
+The optional vendor and identified embedded code keep their **MIT** terms:
+see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and
+[licenses/lottie-web-MIT.txt](licenses/lottie-web-MIT.txt). Preserve these notices,
+attributions and upstream headers with redistributed code and browser bundles.
+Third-party MIT components are excluded from the original-code licence grant.
 
-The surface accepts an optional `LottieNavigationPolicy` from its host (`navigation` option/service). The Workbench consumer borrows the existing nodal pan-gesture, pan-offset and pointer-anchored scaling functions. Wheel zoom is anchored at the pointer; +/- buttons zoom around the viewport center. Primary drag beyond 5px, middle-button drag or Alt drag pans; a short primary click selects. Pan consumes the gesture so releasing it cannot select. `Cadrer` restores the whole animation. Zoom is 35–300% of the fitted view in this consumer. Navigation has no playback authority and resets when the source changes. SVG-space camera transforms preserve picking, clipping, non-scaling contours and construction markers proportional to view zoom.
-
-`Tracés` toggles all supported visible outlines without selecting or expanding the tree. Its pressed state is accessible and visually indicated. Global outlines are thin and subdued; hover and selection remain above them. The mode follows evaluated frames, pan/zoom and layer visibility, and does not widen support for complex masks or generated geometry. Navigation remains ephemeral surface state. The consumer persists the outline toggle and appearance in its Workbench Tool instance. The authored JSON remains unchanged.
-
-A settings button beside `Tracés` opens a form below the toolbar, using the consumer's existing ControlDock/IconButton components. Supply `mountPathSettings` to the surface to host this form. Color (six-digit hex), opacity (0–100%), width (0.25–2.5 CSS px) and global handles are view-only settings. The package validates settings through `setPathAppearance`; selection uses the chosen manual/type color with a strong continuous 3px contour at full opacity; hover remains thin and dashed. Global handles are off by default and apply only to supported Bézier paths and qualified vector masks; parametric shapes retain contours only. Selected construction inspection remains independent. Global vertices/control handles follow view zoom, respect visibility and do not participate in picking. Escape/close restore trigger focus; outside click or focus leaving dismisses the form. The consumer supplies a `LottiePathViewPort` backed by `instance.state.lottiePathView` and the existing `runtime.setState` persistence. Color mode, manual color, opacity, width, global handles and the Tracés toggle restore on reload and when that same instance is restored from Workbench history. Settings are isolated per Tool instance; a genuinely new instance starts from defaults. Reader and reference within one Tool share the configuration. Old/malformed values are normalized on restoration; no separate storage or source JSON changes. Without this optional port, settings remain local to the surface.
-
-Mask containment uses exact bounds of evaluated M/L/C/Z geometry, including cubic extrema; it does not depend on `getBBox()` for a non-rendered clip-path child. This avoids the measured empty bounding box in Firefox. Native exact path geometry still determines pointer hits.
-
-## Consumer and validation
-
-The local consumer is `Konitif/apps/workbench-demo`; the source repository is the sibling `Repositories/konitif/viewer-lottie`. It is explicitly offered beside Viewer 3D in Tools available, and uses the existing select/compose workflow. A fresh workspace opens no Lottie panel automatically. The contextual path widget can stay inside the Tool or move to the shell using native dock controls. No other package imports the vendor by this change.
-
-The lockfile pins the public dependency graph, including `lottie-web` 5.13.0 and the TypeScript 5.9.3 development compiler. From a standalone clone, use `npm ci --ignore-scripts --no-audit --no-fund`, then `npm run build`, `npm test` and `npm run verify:package`. No sibling checkout is required. The read-only GitHub workflow repeats these checks using an already cached runner runtime. The consumer has additional tests over its real Temporal host and Workbench catalog.
-
-The admitted fixtures live in the consumer, not this package: Adrock 13.0667s and Banner 24.12s, exact source hashes verified before parsing. This is not a sandbox for arbitrary JSON uploads. Inputs with expressions, effects, external assets/fonts, 3D, segmented loading or excessive structure are refused. No LottieFiles service is needed.
-
-## Notices
-
-Original integration code: PolyForm Noncommercial 1.0.0, see LICENSE.md. The optional vendor and identified embedded code keep their MIT terms: see THIRD_PARTY_NOTICES.md and licenses/lottie-web-MIT.txt. Preserve these files with an archive or browser bundle; package separation is not a substitute for retaining notices. Archive/provider hashes are in qualification/archive-review.json. No animation, font or artwork is included in this package. No publication or distribution approval is implied by this local proof.
-
-
-## Shared type palette and layer tree
-
-The settings form offers Uniform / By type with an accessible legend. Mask/solid identity wins over parametric source type, which wins over evaluated straight/curved segments and open/closed topology. Switching modes preserves the manual color. `pathTypes.ts` supplies the single palette and classifier for outlines, selected contours, all handle strokes and tree accents. Homogeneous groups, layers and precompositions inherit the effective geometry color. Mixed branches show the deterministic set of accents and a Mixte label, without assigning a fabricated single type. Styles use actual vendor paint-to-subject associations, including before their active time range; nulls remain neutral. A solid's original fill swatch remains separate. Selected construction is fully visible and its 6px/5px base markers follow view zoom.
-
-The primary renderer publishes an ephemeral `LottiePathTypeObservation` keyed by source occurrence IDs. The native widget updates rows in place, including animated categories; no geometry observation is persisted. `mountLottiePathList` accepts host-provided `treePolicy` and `mountCard` adapters. The Workbench consumer supplies the same hierarchy primitives and layer-card DOM/Svelte action used by its 3D assembly tree. Compact rows use restrained type tints, borders/icons, clear labels and lateral spacing. Hover indicates the nearest visible ancestor without expanding folders. Uniform mode uses the saved manual color for geometry and inherited branches in both tree and viewport. The shared layer-card primitive draws curved parent connections; the document root has extra space before its children. The package does not import Svelte or the host UI to provide this projection.
-
-## Composition inspection and content layout
-
-Null layers expose a small neutral cross at local (0,0), transformed by the evaluated own and parent matrices and the actual composition/view CTM. This is tree selection/hover and optional global Tracés feedback, not a new canvas hit target. The pinned NullElement has no rendered transform of its own; its evaluated `mProp.v` and parent hierarchy are used explicitly. Nested precomp time/stretch, visibility and inactive ranges are respected.
-
-`appearance.cropViewport` defaults true. Turning Crop viewport off omits only the root composition clip from inspection overlays and allows root SVG overflow inside the host stage. Paint retains its original root clip; precomposition clips and artistic masks remain. A dashed composition frame follows the camera. Off-frame contours, supported construction and null origins can be inspected from the tree; pointer picking still admits only authored painted regions. Missing/unsupported vendor geometry is not reconstructed.
-
-Optional `rulers`, `grid` and `axes` use composition coordinates derived from the same evaluated SVG camera. The host supplies `createNodalViewportProjection` for the background rectangular grid. Top/left rulers use readable adaptive numeric steps; four frame-edge guides fade from transparent to a maximum opacity of 0.6. All are non-interactive. They persist with Crop viewport in the existing Tool view configuration and share reader/reference state. Cadrer and resize fit within 16–48px adaptive safety margins on all four sides, with an additional 22px for ruler rails and 40px for the navigation toolbar. Zoom percentage is relative to this padded fit.
-
-The consumer uses native WidgetDockHost alongside a declared ToolContentRegion. Stack mounts its existing header/hidden-header chrome in that content slot; it remains the command authority. The comparison button belongs to the same content column, while the dock occupies the full Tool height. Undeclared tools keep their existing Stack chrome. Open/closed/resized/moved docks, hidden/visible header, fullscreen and history restoration retain the same native controls.
-
-Path and the selected cross inspect the evaluated transform anchor (pivot), projected through the native layer/group, parent and precomposition matrices. They do not inspect local zero or a bounding-box centre. Scaling around a fixed anchor therefore leaves this point stationary. Shape leaves use their enclosing group pivot; missing or singular projections produce no invented point. Null-layer inspection retains its existing qualified origin contract.
-
-Onion poses use the shared object selection: no selection retains the whole composition; an active selection retains only its geometric contributions, including group descendants and explicit unions. Filtering affects copied pose paint only, preserves transform/mask/clip definitions, and uses individual geometry caches when paint is shared. Hidden geometry stays excluded. Selection changes invalidate pose paint immediately; camera-only changes do not resample it. Current paint and source/persistent visibility remain unchanged.
-Empty documents with layers:[] are admitted with the same dimension, duration and resource budgets. The optional editing port supports a temporary Pen draft (click vertices, drag symmetric tangents, Enter commit, Escape cancel) and contour settings. A completed open curve is committed by the host as one undoable source transaction, with a shape layer/group/path/stroke and static transform. No keys or fill are generated by drawing. The Workbench consumer exposes this through its native left Drawing dock and creates a distinct persisted composition; numeric +key editing, export and preset restoration remain shared. Morphing and post-creation vertex editing are not provided. New layers append to the source list; this tranche does not edit layer order.
-
-Numeric animation created from a static property uses linear temporal interpolation. Inserting a key into an existing animation still preserves that segment’s interpolation. The host may explicitly linearize a selected key’s outgoing segment with one undoable command; neighboring segments and spatial tangents remain intact. The initial editing UI offers a Linéaire action and displays the outgoing segment as Maintien, Linéaire or Courbe. Custom easing controls are not yet exposed.
-
-
-On a revision of the same document, the reading session retains the previous visible canvas while preparing its replacement hidden. It paints the current frame, visibility and selection before disposing the preceding canvas and revealing the replacement in the same task. Picking against the preceding revision is suspended until the incoming projection is ready. Superseded revisions are skipped before construction or disposed without activation when already in flight. This reduces blank frames and redundant builds within a single update cycle; it does not mutate the vendor player’s internal property caches in place. A different document still clears the preceding projection.
-
-
-The editable Timeline exposes Suppr/Delete for selected numeric source keys, scoped to the focused Timeline and excluded from text/value fields and active playback. Removing several keys is one document history transaction. With one remaining key, its value becomes static; with none, the current evaluated pose is retained as a static value. Opaque path/shape source keys remain inspection-only.
-
-Outgoing transitions are illustrated within the numeric track band: a step for hold, a diagonal for linear, and a curve symbol for imported easing. The symbol identifies the category rather than plotting property values or exact easing handles. Right-click a segment or its starting key to choose Maintien or Linéaire. The command targets the source key’s outgoing segment, changes neither playback time nor neighboring segments, and supports undo/redo. The menu can also be opened with the context-menu key or Shift+F10 and closed with Escape. Custom Bézier editing remains deferred.
-
-Visual editing now provides move, rotation, proportional X/Y scale and compensated pivot tools for admitted 2D layer/group transforms. The surface draws a selection box and pivot cross, with mode-specific pointer handles. Gestures preview inert guides and commit one host transaction on release; cancellation never writes the source. In the editable demo, validated changes of an animated numeric property upsert a key at the current local frame: existing keys are updated without duplicates, and new keys are included in the same undo transaction. On an owner already animated through a numeric transform, editing another transform property (position, anchor, rotation or scale) also creates its animation at the current frame. Entirely static owners and unrelated style properties remain static until explicitly animated. Unsupported spatial-trajectory insertion remains guarded. A selected geometry delegates its transform gesture to its nearest containing transform owner. Moving the pivot updates anchor and position atomically to preserve paint. Reader header/footer each occupy one 36px line; diagnostics remain available through the Infos disclosure.
-
-Live gesture preview transforms the existing SVG projection without mutating vendor properties or the host document and retains the final preview until the committed revision is ready. Escape/cancellation restores exact original transform attributes. Layer siblings with authored AE parenting follow their parent. Groups with external shared paint keep guide-only preview, because moving their DOM container would not faithfully move that paint. Selectable geometry uses a pointer cursor; the first Viewer selection activates Move when previously inspecting, and existing tool choices are retained. Subpixel movement is admitted.
-
-
-Numeric source keys can be dragged horizontally in the editable Timeline. The provisional key, spans, transition indicators and shared transport follow together, snapping to global frames while preserving fractional local frames in precompositions. Release commits one host history transaction; Escape restores the projection and transport. Retiming preserves source values, easing and spatial tangents. Neighbor crossing, collisions, out-of-range placement and terminal entries without autonomous values remain guarded. The selected key index keeps Properties attached through retiming and undo/redo. JSON exports the current edited composition data.
-
-Selectable paths have a default six CSS-pixel screen-space corridor around evaluated geometry for hover and click. The corridor remains constant under zoom, respects visibility and clipping, and prioritizes exact painted hits over nearby candidates. It changes picking only; source geometry and paint remain untouched.
-
-In type-color mode, shared tree presentation gives vector layers a dedicated blue accent and lightens group content colors with 28% white, including each mixed color. Geometry leaf colors and manual uniform mode remain unchanged. Path-list and Timeline use this same presentation rule.
-
-The outgoing numeric transition menu also offers Ease-in, Ease-out and Ease-in-out presets. These set normalized temporal Bézier handles on one segment, preserve values and spatial tangents, and support host undo/redo. Timeline recognizes their handles and displays a corresponding symbol; custom imported curves remain classified as Curve. A custom Bézier editor is deferred.
-
-In the editable Timeline, Ctrl-left drag selects a rectangle of keys. Dragging an already selected numeric key shifts the complete selection by one global time delta; previewed spans, transitions and transport follow together. Release commits one host transaction; Escape cancels. Source timestamps are converted per occurrence, and collisions or incompatible moves reject the complete transaction without partial writes. The shared rectangle primitive retains its prior default gesture for other consumers.
-
-
-The host editing contract also admits `style-options` for validated style edits. The demo exposes a contextual style subpanel from Fill/Stroke tree entries, borrowing the existing numeric edits and history. Static solid/gradient conversion and gradient color stops are editable. The demo admits gradient-color-key at the current local frame; stop edits sample the complete gradient vector and upsert its color key, preserving other stops, opacity tails and imported temporal easing. Animated color vectors are handled as scalar channels and rejoined without relaxing the general numeric property contract. Conversion between solid and gradient remains restricted to static color properties.
-
-Keyboard Move previews Position through the existing SVG transform projection. Repeated arrows share a transient gesture: the source and the selection handles remain stable during repeats, then release plus a short idle delay admits one undoable translate at the current time. Escape cancels the preview. The overlay stays visible until the replacement renderer is ready. Keyboard gestures validate once. Compatible numeric revisions now update the native reader in place; the adapter admits only unchanged structure, animation mode and vector dimensions, resets native interpolation caches, and retains the same SVG. It rejects unsupported changes before mutating any native property. Structural edits and static/animated mode changes reconstruct the reader. Inspection projections are renewed for revision identities; auxiliary onion/trajectory readers may still restart. This pinned adapter does not make arbitrary Lottie revisions incremental.
-
-The generic Timeline key drag explicitly focuses its key before selecting it, because preventDefault suppresses the browser’s default focus transfer. Delete consequently reaches the Timeline after clicking a draggable key from another panel, without a global destructive shortcut.
-
-Timeline key manipulation is a capability independent of its inline numeric form. Numeric and gradient color codecs borrow the same retiming, collision, deletion and interpolation commands; gradients map their channels once at the host boundary. A mixed selection is admitted atomically and restored by one Undo.
-
-An importing host declares canImport and admits import-source after validating data with the existing reading profile. The main Viewer accepts one local .json or .lottie file; widget and preset drag payloads are left to Workbench. dotLottie archives read the declared active animation (or first manifest entry) and admit only bounded stored/deflated entries with verified checksums. The existing vector reading limits still apply. Decoding never mutates the document; a refused file, a changed source during reading, or a disposed surface cannot replace it. Imports enter the same document collection and persistence path as created compositions, without altering the workspace preset.
-
-
-## Host-driven canvas output (release candidate)
-
-Import createLottieCanvasOutput from @konitif/viewer-lottie/canvas, supply an
-already admitted immutable LottieSource and a host-owned HTMLCanvasElement.
-Set its dimensions before preparation (1..2048 per axis, at most 4,194,304 pixels).
-The native light canvas provider receives a cloned document, expressions disabled,
-autoplay false and loop false. Importing the declaration starts neither vendor nor
-transport. The pinned provider uses its native context path without a container,
-which would otherwise create a different canvas. No surface is mounted.
-
-renderFrame accepts an explicit frame relative to the source in-point, clamps it
-to the admitted interval and quantizes to an integer. It returns true only when
-pixels were repainted, allowing a host to upload a GPU texture on change. The host
-can draw that artwork onto multiple surface canvases while retaining independent
-transforms and one canonical time. Repeated requests for the same frame are no-ops.
-resize reads host-owned dimensions and invalidates the frame cache. dispose is
-idempotent and owns only the renderer, never the host canvas or a clock.
-
-Prepare a candidate on a separate canvas and swap it into a consumer only after
-the promise resolves. Admission failures never load the vendor. Preparation has a
-bounded timeout and an optional AbortSignal; partial renderers are destroyed on
-failure or cancellation. A completed renderer is explicitly disposed by its host.
-
-This output API does not add screen identity, robot commands, Timeline state, LED
-authority or a mixer. Those remain host contracts. Source/editor SVG inspection
-keeps its existing entry points. Publication requires the release checklist in
-RELEASE.md and a separate explicit publication decision.
+No animation, font or artwork is included. User-supplied content keeps its own
+rights and provenance. Provider hashes are in
+[qualification/archive-review.json](qualification/archive-review.json).

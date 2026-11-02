@@ -31,6 +31,6 @@ assert.ok(existsSync(npmCli),'Existing npm CLI required');
 const destination=mkdtempSync(join(tmpdir(),'konitif-viewer-lottie-package-'));
 const packed=JSON.parse(execFileSync(process.execPath,[npmCli,'pack','--offline','--ignore-scripts','--json','--pack-destination',destination],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024,env:{...process.env,npm_config_update_notifier:'false'}}))[0];
 const files=packed.files.map(file=>file.path);
-for(const required of ['dist/canvas.js','dist/canvas.d.ts','dist/canvasRenderer.js','dist/canvasRenderer.d.ts','LICENSE.md','THIRD_PARTY_NOTICES.md','licenses/lottie-web-MIT.txt','RELEASE.md','qualification/canvas-output.v1.json'])assert.ok(files.includes(required),'Missing packed file '+required);
-for(const file of files)assert.match(file,/^(dist\/|qualification\/|licenses\/|package\.json$|README\.md$|RELEASE\.md$|CHANGELOG\.md$|LICENSE\.md$|THIRD_PARTY_NOTICES\.md$)/,'Unexpected packed file '+file);
+for(const required of ['dist/canvas.js','dist/canvas.d.ts','dist/canvasRenderer.js','dist/canvasRenderer.d.ts','LICENSE.md','THIRD_PARTY_NOTICES.md','licenses/lottie-web-MIT.txt','RELEASE.md','docs/host-integration.md','qualification/canvas-output.v1.json'])assert.ok(files.includes(required),'Missing packed file '+required);
+for(const file of files)assert.match(file,/^(dist\/|qualification\/|licenses\/|docs\/host-integration\.md$|package\.json$|README\.md$|RELEASE\.md$|CHANGELOG\.md$|LICENSE\.md$|THIRD_PARTY_NOTICES\.md$)/,'Unexpected packed file '+file);
 process.stdout.write(JSON.stringify({package:manifest.name,version:manifest.version,files:files.length,bytes:packed.size,exportAndNoticeChecks:'passed',registryOnlyLockfile:true})+'\n');
