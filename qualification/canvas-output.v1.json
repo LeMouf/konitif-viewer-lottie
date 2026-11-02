@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "package": "@konitif/viewer-lottie",
   "version": "0.1.0",
-  "status": "release-candidate-not-published",
+  "status": "published",
   "sourceBaseCommit": "e465e4e",
   "sourceBranch": "main",
   "vendor": {
@@ -47,10 +47,32 @@
   },
   "registryPreflight": "Public npm registry returned E404 for the package; this does not prove name ownership or private-package absence.",
   "limitations": [
-    "The package has not been published by this preparation.",
-    "Behavior Studio has not installed this local candidate.",
+    "Robot screen bindings and canonical authoring/transport remain consumer responsibilities.",
     "Robot screen bindings, eye-focus authoring, LED-to-crown commands and multi-file mixing remain consumer responsibilities.",
     "Native canvas review qualifies the supplied vector pupil fixture, not every admitted animation."
   ],
-  "sourceRepository": "https://github.com/LeMouf/konitif-viewer-lottie"
+  "sourceRepository": "https://github.com/LeMouf/konitif-viewer-lottie",
+  "publication": {
+    "sourceCommit": "2af5969c6d0d1091f899001ea8987c335b9ee8db",
+    "registryIntegrityVerified": true,
+    "downloadedArchiveVerified": true,
+    "archive": {
+      "file": "konitif-viewer-lottie-0.1.0.tgz",
+      "bytes": 106531,
+      "sha256": "ff04531a9d9594c574b494c67836c7f85cffa61125f89edb9732107e666b2fb3",
+      "integrity": "sha512-EI0iYsu96lXGr8/1vlMNLEpg/tqi5wOoQVaizikFvwt6GXRHWDOX8v/2BasXfL/wd5aDJmaarHgBnP3GRb33xA==",
+      "files": 100,
+      "requiredExportsAndNoticesVerified": true
+    },
+    "distTags": {
+      "latest": "0.1.0",
+      "next": "0.1.0"
+    },
+    "defaultTagCorrection": {
+      "attempted": true,
+      "succeeded": false,
+      "registryStatus": 400,
+      "note": "Registry refused deletion of the automatically present latest tag after authenticated confirmation."
+    }
+  }
 }

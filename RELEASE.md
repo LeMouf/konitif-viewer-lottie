@@ -1,52 +1,48 @@
-# Release candidate 0.1.0
+# Release 0.1.0
 
-Status: npm release prepared, not published. Source base: e465e4e. Public source
-repository: https://github.com/LeMouf/konitif-viewer-lottie. The source is prepared
-for main; repository publication and npm package publication are separate steps.
-No registry publication is implied by the archive. The product consumer keeps its published dependency
-boundary; no local tarball or sibling-source alias has been installed there.
+Published package: [@konitif/viewer-lottie](https://www.npmjs.com/package/@konitif/viewer-lottie).
+Public source: [LeMouf/konitif-viewer-lottie](https://github.com/LeMouf/konitif-viewer-lottie).
+Published source commit: 2af5969c6d0d1091f899001ea8987c335b9ee8db.
 
 ## Qualified scope
 
-- Existing SVG reader, inspection/editing host ports and reference surface retained.
-- New lazy canvas entry with explicit host frame requests, no vendor autoplay,
-  cloned sources and bounded canvas dimensions.
-- Repeated integer frame requests reuse the existing pixels; resize invalidates
-  the cache. Preparation cancellation/timeouts destroy partial renderers.
-- TypeScript build and all 131 native Node tests pass.
-- The real lottie-web 5.13.0 light-canvas provider rendered the vector pupil fixture
-  at frames 0/66, skipped an unchanged frame and rendered again at 320 square.
-  Measurements and vendor hashes are in qualification/canvas-output.v1.json.
+- Hosted SVG reading, inspection and optional editing ports.
+- Lazy native canvas output driven by explicit host frames, with no vendor autoplay.
+- Cloned sources, bounded resources, cancellation and deterministic disposal.
+- Repeated integer frames reuse pixels; resize invalidates the cache.
+- Standalone public-registry build, all 131 Node tests and GitHub validation passed.
+- Native canvas review rendered the vector pupil fixture at frames 0/66,
+  skipped an unchanged frame and rendered again at 320 square.
 
-The supplied fixture is a qualification input, not package-owned artwork. The
-publication archive includes original and third-party notices. No Studio bridge,
-robot identity, LED command admission, independent transport or mixer is added.
+The package adds no robot identity, screen binding, LED authority, independent
+transport or mixer. Those remain consumer responsibilities. The qualification
+fixture is not distributed as package-owned artwork.
 
-## Remaining publication decision
+## Archive verification
 
-The public registry metadata request returned E404. This establishes only public
-visibility at verification time; authenticate and verify scope/version rights at
-the actual release step. Never infer ownership from that response.
+The public registry archive was downloaded and matched the reviewed archive:
 
-Recommended first publication channel: explicit version 0.1.0, public access,
-tag next. Keep latest unchanged. Consumers can pin the exact version after its
-publication is verified. Actual publication requires explicit user authorization.
+- Size: 106531 bytes; 100 files.
+- SHA-256: ff04531a9d9594c574b494c67836c7f85cffa61125f89edb9732107e666b2fb3.
+- Integrity: sha512-EI0iYsu96lXGr8/1vlMNLEpg/tqi5wOoQVaizikFvwt6GXRHWDOX8v/2BasXfL/wd5aDJmaarHgBnP3GRb33xA==.
 
-## Reproduce locally with existing tooling
+Publication explicitly requested the next tag. The registry also exposed latest
+for this first release and refused its authenticated deletion with HTTP 400.
+Both tags currently point to 0.1.0; consumers should pin the exact version.
+No claim is made that latest remained absent.
 
-1. From a standalone clone, run npm ci --ignore-scripts --no-audit --no-fund,
-   then npm run build (the compiler is pinned in development dependencies).
-2. Run node --test tests/*.test.mjs.
-3. Review git diff --check, package exports, notices and qualification evidence.
-4. Create the archive with pnpm pack; inspect its complete file list and digest.
-5. After approval, publish the reviewed archive, not an unreviewed rebuilt tree:
-   npm publish <reviewed-archive.tgz> --access public --tag next
-6. Verify the registry's version, exports and integrity against the archive.
-7. Only then add the exact published version to Behavior Studio, update its lock,
-   and connect the host-driven output to the existing screen canvas compositor.
-8. Validate reader controls, Timeline time, the animated pupil, per-screen
-   calibration, disposal/reload and texture updates in the product.
+## Reproduce and prepare another release
 
-The public source repository can be validated independently from the product.
-Npm publication, release tag creation and product installation remain distinct
-steps; the local candidate has not been installed into Behavior Studio.
+1. Run npm ci --ignore-scripts --no-audit --no-fund from a standalone clone.
+2. Run npm run build, npm test and npm run verify:package.
+3. Review exports, notices, qualification evidence and git diff --check.
+4. Increment the version before preparing another publication; published npm
+   versions are immutable.
+5. Obtain explicit authorization and publish the reviewed archive with public
+   access and the intended tag. Verify registry metadata and downloaded bytes.
+6. Install only the exact verified registry version into a consumer, then test
+   its commands, host time, persistence, disposal and texture updates.
+
+Original integration and third-party licence notices remain in LICENSE.md,
+THIRD_PARTY_NOTICES.md and licenses/lottie-web-MIT.txt. Keep them with redistributed
+archives and browser bundles. Provider evidence is in qualification/.

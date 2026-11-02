@@ -1,7 +1,7 @@
 # @konitif/viewer-lottie
 
 Host-driven Lottie reading, inspection, editing ports and canvas output for KONITIF.
-First release candidate; npm publication is pending.
+Version **0.1.0** is [published on npm](https://www.npmjs.com/package/@konitif/viewer-lottie).
 
 ## Features
 
