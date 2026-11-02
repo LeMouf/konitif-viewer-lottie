@@ -140,3 +140,9 @@ This output API does not add screen identity, robot commands, Timeline state, LE
 authority or a mixer. Those remain host contracts. Source/editor SVG inspection
 keeps its existing entry points. Publication requires the release checklist in
 RELEASE.md and a separate explicit publication decision.
+
+## Host editing (0.2)
+
+The optional `@konitif/viewer-lottie/editing` entry exports `createLottieEditing`, source-property projection and numeric track readings. It borrows an explicit history port and document read/replace/persist callbacks. It creates no workspace, persistence store, transport or clock. Transform, key, numeric-preview, style and pen operations preserve the existing Workbench host dialect and admission. A host cancels previews before replacing its document or changing the playback scope, and disposes editing with its lifetime.
+
+Use `chrome: "none"` and `editingToolbar: false` when the host shell supplies controls. Picking, import, transform handles and error feedback remain active; default chrome is unchanged. Layer trees borrow the same host, including selection and immutable-revision remapping. The host retains its own command shortcuts and history integration.

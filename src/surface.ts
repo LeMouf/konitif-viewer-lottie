@@ -28,6 +28,10 @@ export function mountLottieViewerSurface(target: HTMLElement, options: {
   mountRectangleSelection?: LottieRectangleSelectionMount;
   label?: string;
   controls?: boolean;
+  /** Omit duplicate chrome when the host supplies its own shell controls. */
+  chrome?: 'default' | 'none';
+  /** Host-shell controls can replace the viewport's editing toolbar. */
+  editingToolbar?:boolean;
   mountHeaderActions?:(target:HTMLElement)=>{dispose():void};
   navigation?: LottieNavigationPolicy;
   navigationView?: {subscribe?(listener:()=>void):()=>void;read():unknown;write(value:{x:number;y:number;zoom:number}):void};
@@ -74,7 +78,9 @@ export function mountLottieViewerSurface(target: HTMLElement, options: {
   const summary=doc.createElement('summary');summary.textContent='Infos';summary.setAttribute('aria-label','Informations du lecteur');summary.style.cssText='cursor:pointer;white-space:nowrap';
   const feedback=doc.createElement('div');feedback.style.cssText='position:absolute;z-index:5;bottom:28px;right:0;width:min(360px,70vw);max-height:220px;overflow:auto;padding:8px;background:var(--color-background-panel,#17212b);border:1px solid var(--color-border-strong,#455564);border-radius:6px';
   feedback.append(status,warning,inspection,error);details.append(summary,feedback);bar.append(details);
-  footer.append(bar);root.append(header, stage, footer); target.append(root);
+  const noChrome=options.chrome==='none';
+  if(noChrome){error.hidden=true;root.append(stage,error);}else{footer.append(bar);root.append(header,stage,footer);}
+  target.append(root);
   const bind = (el: HTMLElement, event: string, listener: EventListener) => { el.addEventListener(event, listener); return () => el.removeEventListener(event, listener); };
   const releases = [
     bind(play, 'click', () => options.host.dispatch({ type: 'play' })),
@@ -84,9 +90,9 @@ export function mountLottieViewerSurface(target: HTMLElement, options: {
     bind(loop, 'change', () => options.host.dispatch({ type: 'set-loop', enabled: loop.checked })),
     bind(select, 'change', () => options.host.dispatch({ type: 'load-source', id: select.value }))
   ];
-  if(options.mountHeaderActions){const actions=doc.createElement('div');actions.style.cssText='display:flex;gap:6px;align-items:center;margin-left:auto;flex:none';header.append(actions);const mounted=options.mountHeaderActions(actions);releases.push(()=>mounted.dispose());}
+  if(options.mountHeaderActions&&!noChrome){const actions=doc.createElement('div');actions.style.cssText='display:flex;gap:6px;align-items:center;margin-left:auto;flex:none';header.append(actions);const mounted=options.mountHeaderActions(actions);releases.push(()=>mounted.dispose());}
   let refreshEditing=()=>{},lastEditingMessage='';
-  if(options.host.editing&&options.controls!==false){
+  if(options.host.editing&&options.controls!==false&&options.editingToolbar!==false){
    const commands=doc.createElement('div');commands.setAttribute('data-lottie-navigation','');commands.style.cssText='position:absolute;right:8px;top:calc(8px + var(--lottie-ruler-inset,0px));z-index:2;display:flex;flex-direction:column;gap:4px;padding:4px;background:var(--color-background-panel,#17212b);border-radius:6px';commands.setAttribute('role','toolbar');commands.setAttribute('aria-label','Édition visuelle');stage.append(commands);
    const button=(text:string,label:string,action:()=>void)=>{const b=doc.createElement('button');b.type='button';b.textContent=text;b.title=label;b.setAttribute('aria-label',label);releases.push(bind(b,'click',action));commands.append(b);return b;};
    const move=button('↔','Déplacer l’élément',()=>options.host.editing!.dispatch({type:'set-mode',mode:options.host.editing!.read().mode==='move'?'inspect':'move'}));
@@ -142,9 +148,9 @@ export function mountLottieViewerSurface(target: HTMLElement, options: {
       status.textContent = reading.loading ? 'Chargement de la fixture…' : !reading.source ? 'Aucune animation chargée.' : !ready ? 'Préparation du rendu…' : `${reading.source.label} · ${profile?.width} × ${profile?.height} · ${profile?.frameRate} i/s`;
       warning.textContent = profile?.warnings.join(' ') ?? '';warning.title=warning.textContent;status.title=status.textContent??'';
       // A renderer failure remains visible until the next source starts loading.
-      if (reading.loading || reading.error) error.textContent = reading.error ?? '';error.title=error.textContent??'';if(error.textContent)details.open=true;summary.textContent=error.textContent?'Erreur':warning.textContent?'Infos ⚠':'Infos';
+      if (reading.loading || reading.error) error.textContent = reading.error ?? '';error.title=error.textContent??'';if(error.textContent)details.open=true;summary.textContent=error.textContent?'Erreur':warning.textContent?'Infos ⚠':'Infos';if(noChrome)error.hidden=!error.textContent;
     },
-    report(cause) { error.textContent = cause instanceof Error ? cause.message : 'Rendu indisponible.';error.title=error.textContent;details.open=true;summary.textContent='Erreur'; play.disabled = seek.disabled = true; root.dataset.lottieReady = 'false'; }
+    report(cause) { error.hidden=false;error.textContent = cause instanceof Error ? cause.message : 'Rendu indisponible.';error.title=error.textContent;details.open=true;summary.textContent='Erreur'; play.disabled = seek.disabled = true; root.dataset.lottieReady = 'false'; }
   });
   function publishViewportHover(ids:readonly string[]){
     const current=options.host.read();

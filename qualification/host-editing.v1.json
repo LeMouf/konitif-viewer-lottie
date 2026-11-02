@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "package": "@konitif/viewer-lottie",
+  "version": "0.2.0",
+  "scope": "host-injected document editing and optional host-shell chrome",
+  "origin": "extraction of Workbench consumer editing/source-property operators",
+  "runtimeDependenciesAdded": [],
+  "qualification": {
+    "nodeTests": 138,
+    "compilation": "passed",
+    "exportsAndNotices": "passed",
+    "native": [
+      "shared layer selection and transform handles",
+      "arrow-key translation commits source revision",
+      "pointer rotation commits source revision",
+      "undo and redo preserve selected occurrence"
+    ],
+    "consumerIntegration": "pending"
+  },
+  "clockOwner": "host",
+  "documentOwner": "host",
+  "historyOwner": "host"
+}

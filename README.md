@@ -1,7 +1,7 @@
 # @konitif/viewer-lottie
 
 Host-driven Lottie reading, inspection, editing ports and canvas output for KONITIF.
-Version **0.1.0** is [published on npm](https://www.npmjs.com/package/@konitif/viewer-lottie).
+Version **0.2.0** · [npm package](https://www.npmjs.com/package/@konitif/viewer-lottie).
 
 ## Features
 
@@ -21,6 +21,7 @@ for supported operations, limits and consumer examples.
 | `@konitif/viewer-lottie` | Tool declaration, contracts and profile validation |
 | `@konitif/viewer-lottie/surface` | SVG reader and inspection controls |
 | `@konitif/viewer-lottie/path-list` | Layer and path tree |
+| `@konitif/viewer-lottie/editing` | Optional document editing with host-owned history |
 | `@konitif/viewer-lottie/canvas` | Lazy canvas output for host-owned textures |
 | `@konitif/viewer-lottie/reference` | Optional fuller SVG provider for comparison |
 

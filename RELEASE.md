@@ -1,3 +1,9 @@
+# Release 0.2.0 — prepared candidate
+
+Host editing and source-property projection are extracted from the Workbench consumer, with an injected history port. The package owns no clock, workspace or persistence store. Host-shell chrome can replace duplicate reader controls. The default reading API remains compatible. No runtime dependency was added.
+
+Qualification: 138 Node tests, compilation, export/archive/notice checks; native layer selection, arrow-key translation, pointer rotation and undo/redo observed in an independent local host. Consumer integration and registry verification are separate gates.
+
 # Release 0.1.0
 
 Published package: [@konitif/viewer-lottie](https://www.npmjs.com/package/@konitif/viewer-lottie).

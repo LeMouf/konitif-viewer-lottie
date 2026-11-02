@@ -5,7 +5,7 @@ export { inspectLottieProfile, frameAtSeconds, LOTTIE_MAX_JSON_BYTES } from './p
 
 /** Declaration only: importing it never loads Lottie, reads a fixture or creates a clock. */
 export const lottieViewerToolModule = defineKonitifToolModule({
-  id: 'konitif.viewer-lottie', name: 'Lottie', version: '0.1.0', scope: 'generic',
+  id: 'konitif.viewer-lottie', name: 'Lottie', version: '0.2.0', scope: 'generic',
   capability: 'vector-animation-reading', implementationBindingKey: 'konitif.viewer-lottie',
   description: 'Optional Lottie reading projection over Viewer, driven by an explicit host playback port.',
   capabilities: {

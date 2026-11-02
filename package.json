@@ -1,6 +1,6 @@
 {
   "name": "@konitif/viewer-lottie",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "type": "module",
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -27,6 +27,10 @@
     "./canvas": {
       "types": "./dist/canvas.d.ts",
       "import": "./dist/canvas.js"
+    },
+    "./editing": {
+      "types": "./dist/editing.d.ts",
+      "import": "./dist/editing.js"
     }
   },
   "files": [
@@ -39,7 +43,8 @@
     "CHANGELOG.md",
     "RELEASE.md",
     "qualification/canvas-output.v1.json",
-    "docs/host-integration.md"
+    "docs/host-integration.md",
+    "qualification/host-editing.v1.json"
   ],
   "dependencies": {
     "lottie-web": "5.13.0"
