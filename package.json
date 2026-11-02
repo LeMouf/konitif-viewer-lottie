@@ -1,7 +1,7 @@
 {
   "name": "@konitif/viewer-lottie",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "license": "PolyForm-Noncommercial-1.0.0",
   "description": "Optional hosted Lottie reading projection over KONITIF Viewer contracts.",
@@ -23,6 +23,10 @@
     "./path-list": {
       "types": "./dist/pathList.d.ts",
       "import": "./dist/pathList.js"
+    },
+    "./canvas": {
+      "types": "./dist/canvas.d.ts",
+      "import": "./dist/canvas.js"
     }
   },
   "files": [
@@ -31,7 +35,10 @@
     "THIRD_PARTY_NOTICES.md",
     "licenses",
     "README.md",
-    "qualification/archive-review.json"
+    "qualification/archive-review.json",
+    "CHANGELOG.md",
+    "RELEASE.md",
+    "qualification/canvas-output.v1.json"
   ],
   "dependencies": {
     "lottie-web": "5.13.0"
@@ -42,6 +49,25 @@
   },
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "verify:package": "node scripts/verify-package.mjs",
+    "prepack": "npm run build && npm test && npm run verify:package",
+    "prepublishOnly": "npm run build && npm test && npm run verify:package"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeMouf/konitif-viewer-lottie.git"
+  },
+  "homepage": "https://github.com/LeMouf/konitif-viewer-lottie#readme",
+  "bugs": {
+    "url": "https://github.com/LeMouf/konitif-viewer-lottie/issues"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
   }
 }

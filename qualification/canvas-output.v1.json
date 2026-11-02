@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "package": "@konitif/viewer-lottie",
+  "version": "0.1.0",
+  "status": "release-candidate-not-published",
+  "sourceBaseCommit": "e465e4e",
+  "sourceBranch": "main",
+  "vendor": {
+    "name": "lottie-web",
+    "version": "5.13.0",
+    "variant": "build/player/lottie_light_canvas.js",
+    "sha256": "b38821d1b75729636d91d31c3fd681210ef037164468d278bc59641d5f48f065"
+  },
+  "automated": {
+    "tests": 131,
+    "passed": 131,
+    "failed": 0,
+    "build": "passed"
+  },
+  "nativeCanvas": {
+    "fixtureSha256": "356de279a2f40246b10a31b9a24b573367c2f59b8241c91eae50354c517f5fb6",
+    "fixtureDistributedInPackage": false,
+    "output256": {
+      "openFrame": 0,
+      "paintedPixels": 4716,
+      "blinkFrame": 66,
+      "blinkPaintedPixels": 276,
+      "repeatedFrameRepainted": false
+    },
+    "output320": {
+      "openFrame": 0,
+      "paintedPixels": 7330
+    },
+    "autoplay": false,
+    "loop": false,
+    "hostCanvasRetained": true
+  },
+  "boundaries": {
+    "time": "explicit-host-frame",
+    "maximumDimension": 2048,
+    "maximumPixels": 4194304,
+    "expressions": false,
+    "externalAssets": false,
+    "sourceCloned": true,
+    "partialRendererDisposedOnFailure": true,
+    "abortablePreparation": true
+  },
+  "registryPreflight": "Public npm registry returned E404 for the package; this does not prove name ownership or private-package absence.",
+  "limitations": [
+    "The package has not been published by this preparation.",
+    "Behavior Studio has not installed this local candidate.",
+    "Robot screen bindings, eye-focus authoring, LED-to-crown commands and multi-file mixing remain consumer responsibilities.",
+    "Native canvas review qualifies the supplied vector pupil fixture, not every admitted animation."
+  ],
+  "sourceRepository": "https://github.com/LeMouf/konitif-viewer-lottie"
+}

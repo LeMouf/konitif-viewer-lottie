@@ -19,7 +19,7 @@
       "sha256": "96b0710aa725b09ecab886afad23deb073b65436eabcfde225e0b3781567222b",
       "eval_calls": 0,
       "notice_lines": [
-        "* by Ga\u00ebtan Renaudeau 2014 - 2015 \u2013 MIT License",
+        "* by Gaëtan Renaudeau 2014 - 2015 – MIT License",
         "(c) Epistemex 2014-2015",
         "License: MIT, header required."
       ]
@@ -29,7 +29,7 @@
       "sha256": "270ccc6913ee166db1951ff053872c9501d010ff95fd9fb1726827484c713722",
       "eval_calls": 1,
       "notice_lines": [
-        "* by Ga\u00ebtan Renaudeau 2014 - 2015 \u2013 MIT License",
+        "* by Gaëtan Renaudeau 2014 - 2015 – MIT License",
         "(c) Epistemex 2014-2015",
         "License: MIT, header required.",
         "Copyright 2014 David Bau."
@@ -40,7 +40,17 @@
       "sha256": "f25f2342b7d307ed8b59907db43328b55f2b504780c6744b023d9249a0bc1a81",
       "eval_calls": 0,
       "notice_lines": [
-        "* by Ga\u00ebtan Renaudeau 2014 - 2015 \u2013 MIT License",
+        "* by Gaëtan Renaudeau 2014 - 2015 – MIT License",
+        "(c) Epistemex 2014-2015",
+        "License: MIT, header required."
+      ]
+    },
+    "package/build/player/lottie_light_canvas.js": {
+      "bytes": 457029,
+      "sha256": "b38821d1b75729636d91d31c3fd681210ef037164468d278bc59641d5f48f065",
+      "eval_calls": 0,
+      "notice_lines": [
+        "by Gaëtan Renaudeau 2014 - 2015 – MIT License",
         "(c) Epistemex 2014-2015",
         "License: MIT, header required."
       ]

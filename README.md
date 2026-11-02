@@ -1,10 +1,11 @@
 # @konitif/viewer-lottie
 
-Optional specialization of KONITIF Viewer for **reading and inspecting** admitted Lottie animations. Version 0.1.0 is a local experimental package, protected by `private: true`; it has not been published. It is not a generic Viewer 2D base or a vector editor.
+Optional specialization of KONITIF Viewer for **reading and inspecting** admitted Lottie animations. Version 0.1.0 is a prepared first-release candidate; no registry publication is claimed by this source preparation. It is not a generic Viewer 2D base or a vector editor.
 
 ## Boundaries
 
 - `.` exports the Tool declaration, typed Viewer port, profile validation and source-occurrence index. Importing it does not start a renderer or clock.
+- `./canvas` exposes the lazy, bounded native canvas output for host-owned previews and textures.
 - `./surface` mounts the SVG light reading surface, controls and geometric picking.
 - `./path-list` mounts the collapsible structure outliner. The Workbench hosts it with its existing widget and dock machinery.
 - `./reference` explicitly loads the fuller SVG provider for comparison; it is not part of the default entry.
@@ -43,7 +44,7 @@ Mask containment uses exact bounds of evaluated M/L/C/Z geometry, including cubi
 
 The local consumer is `Konitif/apps/workbench-demo`; the source repository is the sibling `Repositories/konitif/viewer-lottie`. It is explicitly offered beside Viewer 3D in Tools available, and uses the existing select/compose workflow. A fresh workspace opens no Lottie panel automatically. The contextual path widget can stay inside the Tool or move to the shell using native dock controls. No other package imports the vendor by this change.
 
-The dependency lock pins `lottie-web` to 5.13.0. Installation was performed with scripts disabled. Build with a host-provided TypeScript compiler (`tsc -p tsconfig.json`); no new compiler installation is required in the existing KONITIF workspace. Run `node --test tests/*.test.mjs` after building. The consumer has additional tests over its real Temporal host and Workbench catalog.
+The lockfile pins the public dependency graph, including `lottie-web` 5.13.0 and the TypeScript 5.9.3 development compiler. From a standalone clone, use `npm ci --ignore-scripts --no-audit --no-fund`, then `npm run build`, `npm test` and `npm run verify:package`. No sibling checkout is required. The read-only GitHub workflow repeats these checks using an already cached runner runtime. The consumer has additional tests over its real Temporal host and Workbench catalog.
 
 The admitted fixtures live in the consumer, not this package: Adrock 13.0667s and Banner 24.12s, exact source hashes verified before parsing. This is not a sandbox for arbitrary JSON uploads. Inputs with expressions, effects, external assets/fonts, 3D, segmented loading or excessive structure are refused. No LottieFiles service is needed.
 
@@ -108,3 +109,32 @@ The generic Timeline key drag explicitly focuses its key before selecting it, be
 Timeline key manipulation is a capability independent of its inline numeric form. Numeric and gradient color codecs borrow the same retiming, collision, deletion and interpolation commands; gradients map their channels once at the host boundary. A mixed selection is admitted atomically and restored by one Undo.
 
 An importing host declares canImport and admits import-source after validating data with the existing reading profile. The main Viewer accepts one local .json or .lottie file; widget and preset drag payloads are left to Workbench. dotLottie archives read the declared active animation (or first manifest entry) and admit only bounded stored/deflated entries with verified checksums. The existing vector reading limits still apply. Decoding never mutates the document; a refused file, a changed source during reading, or a disposed surface cannot replace it. Imports enter the same document collection and persistence path as created compositions, without altering the workspace preset.
+
+
+## Host-driven canvas output (release candidate)
+
+Import createLottieCanvasOutput from @konitif/viewer-lottie/canvas, supply an
+already admitted immutable LottieSource and a host-owned HTMLCanvasElement.
+Set its dimensions before preparation (1..2048 per axis, at most 4,194,304 pixels).
+The native light canvas provider receives a cloned document, expressions disabled,
+autoplay false and loop false. Importing the declaration starts neither vendor nor
+transport. The pinned provider uses its native context path without a container,
+which would otherwise create a different canvas. No surface is mounted.
+
+renderFrame accepts an explicit frame relative to the source in-point, clamps it
+to the admitted interval and quantizes to an integer. It returns true only when
+pixels were repainted, allowing a host to upload a GPU texture on change. The host
+can draw that artwork onto multiple surface canvases while retaining independent
+transforms and one canonical time. Repeated requests for the same frame are no-ops.
+resize reads host-owned dimensions and invalidates the frame cache. dispose is
+idempotent and owns only the renderer, never the host canvas or a clock.
+
+Prepare a candidate on a separate canvas and swap it into a consumer only after
+the promise resolves. Admission failures never load the vendor. Preparation has a
+bounded timeout and an optional AbortSignal; partial renderers are destroyed on
+failure or cancellation. A completed renderer is explicitly disposed by its host.
+
+This output API does not add screen identity, robot commands, Timeline state, LED
+authority or a mixer. Those remain host contracts. Source/editor SVG inspection
+keeps its existing entry points. Publication requires the release checklist in
+RELEASE.md and a separate explicit publication decision.
